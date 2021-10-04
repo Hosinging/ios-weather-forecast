@@ -43,14 +43,16 @@ enum URI {
 final class WeatherDataManager {
     static let shared = WeatherDataManager()
     private var isPathCurrent = true
-    var latitude: Double? = 37.33497182951948
-    var longitude: Double? = -122.00928220086737
+    var initialLat = 126.96693
+    var initialLon = 37.61831
+    var latitude: Double?
+    var longitude: Double?
     
     
     private init() {}
     
     func fetchCurrentWeather() {
-        let url = generateURI(path: true, location: generateLocation())
+        let url = generateURI(path: true, location: location)
         self.fetch(urlString: url) { (result: Result<CurrentWeather, APIError>) in
             switch result {
             case .success(let currentWeather):
@@ -62,7 +64,7 @@ final class WeatherDataManager {
     }
     
     func fetchFiveDaysWeather() {
-        let url = generateURI(path: false, location: generateLocation())
+        let url = generateURI(path: false, location: location)
         self.fetch(urlString: url) { (result: Result<FivedaysWeather, APIError>) in
             switch result {
             case .success(let currentWeather):
@@ -72,12 +74,18 @@ final class WeatherDataManager {
             }
         }
     }
-    
-    private func generateLocation() -> CLLocation {
-        guard let lat = latitude, let lon = longitude else { fatalError() }
-        let location = CLLocation(latitude: lat, longitude: lon)
-        return location
+    var location: CLLocation {
+        if let lat = latitude, let lon = longitude {
+            return CLLocation(latitude: lat, longitude: lon)
+        }
+        return CLLocation(latitude: initialLat, longitude: initialLon)
     }
+    
+//    private func generateLocation() -> CLLocation {
+//        guard let lat = latitude, let lon = longitude else { return CLLocation(latitude: initialLat, longitude: initialLon) }
+//        let location = CLLocation(latitude: lat, longitude: lon)
+//        return location
+//    }
     
 //    func generateURI(lat: Double?, lon: Double?, path: Bool) -> String {
 //        guard let lat = lat, let lon = lon else { return "" }
