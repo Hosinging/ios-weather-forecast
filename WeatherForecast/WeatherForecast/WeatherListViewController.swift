@@ -15,6 +15,7 @@ class WeatherListViewController: UIViewController {
         generateLocationManager()
         bringCoordinates()
         WeatherDataManager.shared.fetchCurrentWeather()
+        converToAddress(with: CLLocation(latitude: WeatherDataManager.shared.latitude!, longitude: WeatherDataManager.shared.longitude!))
     }
 }
 
@@ -36,4 +37,28 @@ extension WeatherListViewController: CLLocationManagerDelegate {
         WeatherDataManager.shared.latitude = coordinate?.latitude
         WeatherDataManager.shared.longitude = coordinate?.longitude
     }
+    
+    func converToAddress(with coordinate: CLLocation) {
+           let geoCoder = CLGeocoder()
+           let locale = Locale(identifier: "ko_kr")
+           
+           geoCoder.reverseGeocodeLocation(coordinate, preferredLocale: locale) { placemark, error in
+               if error != nil {
+                   print(error)
+                   return
+               }
+               
+               guard let placemark = placemark?.first,
+                     let addressList = placemark.addressDictionary?["FormattedAddressLines"] as? [String] else {
+                         return
+                     }
+               
+               let address = addressList.joined(separator: " ")
+               guard let newAddress = addressList.first?.components(separatedBy: " ") else { return }
+               print(newAddress)
+               let currentArea = newAddress[0]
+               let currentCity = newAddress[1]
+               print(currentArea, currentCity)
+           }
+       }
 }
