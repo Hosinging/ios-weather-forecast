@@ -12,12 +12,10 @@ class WeatherListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        generateLocationManager()
+        bringCoordinates()
         WeatherDataManager.shared.fetchCurrentWeather()
-        
-//        generateLocationManager()
-//        bringCoordinates()
     }
-
 }
 
 extension WeatherListViewController: CLLocationManagerDelegate {
