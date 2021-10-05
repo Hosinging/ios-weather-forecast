@@ -43,13 +43,21 @@ enum URI {
 final class WeatherDataManager {
     static let shared = WeatherDataManager()
     private var isPathCurrent = true
-    var initialLat = 126.96693
-    var initialLon = 37.61831
+    var currentLocation: CLLocation?
+    var initialLat = 37.61831
+    var initialLon = -122.00931
     var latitude: Double?
     var longitude: Double?
     
     
     private init() {}
+    
+    var location: CLLocation {
+        if let lat = latitude, let lon = longitude {
+            return CLLocation(latitude: lat, longitude: lon)
+        }
+        return CLLocation(latitude: initialLat, longitude: initialLon)
+    }
     
     func fetchCurrentWeather() {
         let url = generateURI(path: true, location: location)
@@ -74,12 +82,8 @@ final class WeatherDataManager {
             }
         }
     }
-    var location: CLLocation {
-        if let lat = latitude, let lon = longitude {
-            return CLLocation(latitude: lat, longitude: lon)
-        }
-        return CLLocation(latitude: initialLat, longitude: initialLon)
-    }
+   
+    
     
 //    private func generateLocation() -> CLLocation {
 //        guard let lat = latitude, let lon = longitude else { return CLLocation(latitude: initialLat, longitude: initialLon) }
